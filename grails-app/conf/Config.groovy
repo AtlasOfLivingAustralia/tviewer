@@ -206,3 +206,8 @@ log4j = {
            'grails.app.service.org.grails.plugin.resource.ResourceTagLib'
     debug  'au.org.ala'
 }
+
+collections.url = 'http://collections.ala.org.au'
+image.ws.url = 'http://images.ala.org.au/ws'
+
+grails.cache.enabled = true

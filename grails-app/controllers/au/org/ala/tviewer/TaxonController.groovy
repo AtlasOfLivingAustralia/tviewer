@@ -1,11 +1,11 @@
 package au.org.ala.tviewer
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import grails.converters.JSON
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
 class TaxonController {
 
-    def resultsService, webService, bieService
+    def resultsService, webService, bieService, imageService, collectionsService
     
     //static defaultAction = "index"
     
@@ -1008,4 +1008,11 @@ class TaxonController {
             ]
 
     ]
+
+    def clearCache() {
+        imageService.clearCache()
+        collectionsService.clearCache()
+
+        render [:] as JSON
+    }
 }

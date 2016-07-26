@@ -4,7 +4,7 @@ import grails.converters.JSON
 
 class BieService {
 
-    def webService, grailsApplication
+    def webService, grailsApplication, imageService, collectionsService
 
     def injectGenusMetadata(list) {
 
@@ -36,9 +36,14 @@ class BieService {
                 }
                 def sppData = md[gen.repSppGuid]
                 if (sppData) {
-                    if (sppData.image && sppData.image.largeImageUrl?.toString() != "null" &&
-                            sppData.image.imageSource == grailsApplication.config.image.source.dataResourceUid) {
-                        gen.image = sppData.image
+                    if (sppData.image && sppData.image.largeImageUrl?.toString() != "null") {
+                        def imageMetadata = imageService.getInfo(sppData.image.largeImageUrl)
+                        if (imageMetadata && imageMetadata?.dataResourceUid == grailsApplication.config.image.source.dataResourceUid) {
+                            gen.image = sppData.image
+                            gen.image.putAll(imageMetadata)
+
+                            if (!fam.image) fam.image = gen.image
+                        }
                     }
                 }
                 else {
@@ -68,9 +73,13 @@ class BieService {
             def data = md[sp.guid]
             if (data) {
                 //sp.common = data.common  // don't override common name with name from bie as CMAR is more authoritative
-                if (data.image && data.image.largeImageUrl?.toString() != "null" &&
-                        data.image.imageSource == grailsApplication.config.image.source.dataResourceUid) {
-                    sp.image = data.image
+                if (data.image && data.image.largeImageUrl?.toString() != "null") {
+                    def imageMetadata = imageService.getInfo(data.image.largeImageUrl)
+                    if (imageMetadata && imageMetadata?.dataResourceUid == grailsApplication.config.image.source.dataResourceUid) {
+                        sp.image = data.image
+                        sp.image.putAll(imageMetadata)
+                    }
+
                 }
             }
             else {
@@ -82,17 +91,26 @@ class BieService {
     }
 
     def betterBulkLookup(list) {
-        def url = grailsApplication.config.bie.baseURL + "/species/guids/bulklookup.json"
+        def url = grailsApplication.config.bie.baseURL + "/ws/species/guids/bulklookup.json"
         def data = webService.doPost(url, "", (list as JSON).toString())
         Map results = [:]
-        data.resp.searchDTOList.each {item ->
-            results.put item.guid, [
-                   common: item.commonNameSingle,
-                   image: [largeImageUrl: item.largeImageUrl,
-                           smallImageUrl: item.smallImageUrl,
-                           thumbnailUrl: item.thumbnailUrl,
-                           imageMetadataUrl: item.imageMetadataUrl,
-                           imageSource: item.imageSource]]
+        for (int i = 0; i < list.size(); i++) {
+            def item = null
+            if (data?.resp?.searchDTOList != null && data.resp.searchDTOList.size() > i) {
+                item = data.resp.searchDTOList.get(i)
+            }
+
+            if (item) {
+                def imageMetadata = imageService.getInfo(item.largeImageUrl)
+                def imageDataResourceMetadata = collectionsService.getInfo(imageMetadata.dataResourceUid)
+                results.put(item.guid, [
+                        common: item.commonNameSingle,
+                        image : [largeImageUrl   : item.largeImageUrl,
+                                 smallImageUrl   : item.smallImageUrl,
+                                 thumbnailUrl    : item.thumbnailUrl,
+                                 imageMetadataUrl: item.largeImageUrl ? item.largeImageUrl.replace('proxyImage', 'details') : null,
+                                 imageSource     : imageDataResourceMetadata.name]])
+            }
         }
         return results
     }
