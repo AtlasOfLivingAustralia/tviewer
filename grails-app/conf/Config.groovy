@@ -39,19 +39,19 @@ if(System.getenv(ENV_NAME) && new File(System.getenv(ENV_NAME)).exists()) {
  *  EXTERNAL SERVERS
  \******************************************************************************/
 if (!bie.baseURL) {
-    bie.baseURL = "http://bie.ala.org.au"
+    bie.baseURL = "https://bie.ala.org.au"
 }
 if (!bie.searchPath) {
     bie.searchPath = "/search"
 }
 if (!biocache.baseURL) {
-    biocache.baseURL = "http://biocache.ala.org.au"
+    biocache.baseURL = "https://biocache.ala.org.au"
 }
 if (!spatial.baseURL) {
-    spatial.baseURL = "http://spatial.ala.org.au"
+    spatial.baseURL = "https://spatial.ala.org.au"
 }
 if (!ala.baseURL) {
-    ala.baseURL = "http://www.ala.org.au"
+    ala.baseURL = "https://www.ala.org.au"
 }
 // spatial services
 if (!spatial.wms.url) {
@@ -64,7 +64,7 @@ if (!spatial.layers.service.url) {
     spatial.layers.service.url = spatial.baseURL + "layers-service"
 }
 if (!headerAndFooter.baseURL) {
-    headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
+    headerAndFooter.baseURL = "https://www2.ala.org.au/commonui"
 }
 /******************************************************************************\
  *  APP CONFIG
@@ -128,13 +128,13 @@ grails.exceptionresolver.params.exclude = ['password']
 // set per-environment serverURL stem for creating absolute links
 environments {
     production {
-        grails.serverURL = "http://taxaexp.ala.org.au"
-        distribution.image.cache = "http://fish.ala.org.au/data/images"
+        grails.serverURL = "https://taxaexp.ala.org.au"
+        distribution.image.cache = "https://fish.ala.org.au/data/images"
         if (!results.cache.baseUrl) {
-            results.cache.baseUrl = "http://fish.ala.org.au/results"
+            results.cache.baseUrl = "https://fish.ala.org.au/results"
         }
         if (!distribution.search.baseUrl) {
-            distribution.search.baseUrl = "http://fish.ala.org.au/search"
+            distribution.search.baseUrl = "https://fish.ala.org.au/search"
         }
     }
     development {
@@ -207,7 +207,7 @@ log4j = {
     debug  'au.org.ala'
 }
 
-collections.url = 'http://collections.ala.org.au'
-image.ws.url = 'http://images.ala.org.au/ws'
+collections.url = 'https://collections.ala.org.au'
+image.ws.url = 'https://images.ala.org.au/ws'
 
 grails.cache.enabled = true
